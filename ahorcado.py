@@ -1,8 +1,8 @@
 import streamlit as st
 import random
 
-# Ruta de la imagen (asegúrate de que esté en la raíz de tu repositorio de GitHub)
-image_path = "Allosteric_Solutions.png"
+# Ruta de la imagen en GitHub
+image_url = "https://raw.githubusercontent.com/allostericsolutions/Ahorcado-/main/Allosteric%20-Solutions.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
@@ -28,8 +28,11 @@ def get_unique_pair(used_combinations):
 def main():
     st.title("Echogenicity Game")
 
-    # Mostrar el logo
-    st.image(image_path, width=100)
+    # Mostrar el logo usando markdown y HTML
+    st.markdown(
+        f'<img src="{image_url}" width="100">',
+        unsafe_allow_html=True
+    )
 
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
