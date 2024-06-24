@@ -30,7 +30,7 @@ def main():
 
     # Mostrar el logo usando markdown y HTML
     st.markdown(
-        f'<img src="{image_url}" width="100">',
+        f'<img src="{image_url}" width="300">',
         unsafe_allow_html=True
     )
 
