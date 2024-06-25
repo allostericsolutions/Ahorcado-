@@ -1,8 +1,11 @@
 import streamlit as st
 import random
+from PIL import Image
+import requests
+from io import BytesIO
 
-# Ruta de la imagen en GitHub (corregida)
-image_url = "Allosteric_Solutions.png" 
+# URL cruda de la imagen en GitHub
+image_url = "https://raw.githubusercontent.com/allostericsolutions/Ahorcado-/main/Allosteric_Solutions.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
@@ -28,8 +31,10 @@ def get_unique_pair(used_combinations):
 def main():
     st.title("Echogenicity Game")
 
-    # Mostrar el logo usando st.image
-    st.image(image_url, width=300)
+    # Descargar la imagen desde la URL cruda y mostrarla
+    response = requests.get(image_url)
+    image = Image.open(BytesIO(response.content))
+    st.image(image, width=300, caption='Allosteric Solutions')
 
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
@@ -93,7 +98,7 @@ def main():
     st.write("\n".join(hangman_stages[:st.session_state.hangman_state]))
 
     if st.session_state.hangman_state >= 7:
-        st.write("¡You Win! 😄")
+        st.write("You Win! 😄")
     elif st.session_state.combinations_made >= max_combinations:
         st.write(f"You Lose! 😔 Final Score: {st.session_state.score}")
 
