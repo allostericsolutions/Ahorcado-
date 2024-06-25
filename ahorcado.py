@@ -1,8 +1,8 @@
 import streamlit as st
 import random
 
-# Ruta de la imagen en GitHub
-image_url = "https://raw.githubusercontent.com/allostericsolutions/Ahorcado-/main/Allosteric%20-Solutions.png"
+# Ruta de la imagen en GitHub (corregida)
+image_url = "https://raw.githubusercontent.com/allostericsolutions/Ahorcado-/main/Allosteric_Solutions.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
