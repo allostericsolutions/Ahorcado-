@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 # Ruta de la imagen en GitHub (corregida)
-image_url = "https://raw.githubusercontent.com/allostericsolutions/Ahorcado-/main/Allosteric_Solutions.png"
+image_url = "Allosteric_Solutions.png" 
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
@@ -106,13 +106,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
-
-Cambié la línea:
-```python
-st.markdown(f'<img src="{image_url}" width="300">', unsafe_allow_html=True)
-```
-por
-```python
-st.image(image_url, width=300)
-```
