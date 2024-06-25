@@ -1,11 +1,9 @@
 import streamlit as st
 import random
 from PIL import Image
-import requests
-from io import BytesIO
 
-# URL cruda de la imagen en GitHub
-image_url = "https://raw.githubusercontent.com/allostericsolutions/Ahorcado-/main/Allosteric_Solutions.png"
+# Ruta local de la imagen
+image_path = "Allosteric_Solutions.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
@@ -31,10 +29,12 @@ def get_unique_pair(used_combinations):
 def main():
     st.title("Echogenicity Game")
 
-    # Descargar la imagen desde la URL cruda y mostrarla
-    response = requests.get(image_url)
-    image = Image.open(BytesIO(response.content))
-    st.image(image, width=300, caption='Allosteric Solutions')
+    # Mostrar el logo usando st.image
+    try:
+        image = Image.open(image_path)
+        st.image(image, width=300, caption='Allosteric Solutions')
+    except Exception as e:
+        st.error(f"Error loading image: {e}")
 
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
