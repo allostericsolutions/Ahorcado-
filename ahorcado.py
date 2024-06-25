@@ -28,11 +28,8 @@ def get_unique_pair(used_combinations):
 def main():
     st.title("Echogenicity Game")
 
-    # Mostrar el logo usando markdown y HTML
-    st.markdown(
-        f'<img src="{image_url}" width="300">',
-        unsafe_allow_html=True
-    )
+    # Mostrar el logo usando st.image
+    st.image(image_url, width=300)
 
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
@@ -109,3 +106,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
+
+Cambié la línea:
+```python
+st.markdown(f'<img src="{image_url}" width="300">', unsafe_allow_html=True)
+```
+por
+```python
+st.image(image_url, width=300)
+```
