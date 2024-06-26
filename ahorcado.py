@@ -4,8 +4,8 @@ from PIL import Image
 import requests
 from io import BytesIO
 
-# URL de la imagen
-image_url = "https://storage.cloud.google.com/allostericsolutions/Allosteric_Solutions.png"
+# URL de la imagen (asegúrate de que el bucket tenga acceso público)
+image_url = "https://storage.googleapis.com/allostericsolutionsr/Allosteric_Solutions.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
