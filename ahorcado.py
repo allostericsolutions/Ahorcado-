@@ -7,6 +7,15 @@ from io import BytesIO
 # URL de la imagen
 image_url = "https://i.imgur.com/LzPcPIk.png"
 
+import streamlit as st
+import random
+from PIL import Image
+import requests
+from io import BytesIO
+
+# URL de la imagen
+image_url = "https://i.imgur.com/LzPcPIk.png"
+
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
     "Diaphragm": 1,
@@ -34,10 +43,13 @@ def main():
     # Mostrar el logo usando st.image
     try:
         response = requests.get(image_url)
+        response.raise_for_status()  # Check if the request was successful
         image = Image.open(BytesIO(response.content))
         st.image(image, width=100, caption='Allosteric Solutions')
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         st.error(f"Error loading image: {e}")
+    except Exception as e:
+        st.error(f"Error processing image: {e}")
 
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
