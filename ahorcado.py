@@ -45,6 +45,7 @@ def main():
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
 
+    # Inicialización de variables de estado
     if "score" not in st.session_state:
         st.session_state.score = 0
     if "combinations_made" not in st.session_state:
@@ -68,42 +69,31 @@ def main():
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button(organ1, key=f"button_{organ1}"):
-            if organ1 == correct:
-                st.session_state.score += 1
-                st.success("Correct!")
-            else:
-                st.session_state.score -= 1
-                st.error("Incorrect.")
-            st.session_state.combinations_made += 1
-            if st.session_state.combinations_made >= max_combinations:
-                st.experimental_rerun()
-            else:
-                st.session_state[f"button_{organ1}_style"] = "color: white; background-color: green;" if organ1 == correct else "color: white; background-color: red;"
-                st.session_state[f"button_{organ1}_label"] = "Correct" if organ1 == correct else "Incorrect"
-                st.experimental_rerun()
-
+        button1 = st.button(organ1, key=f"button_{organ1}")
     with col2:
-        if st.button(organ2, key=f"button_{organ2}"):
-            if organ2 == correct:
-                st.session_state.score += 1
-                st.success("Correct!")
-            else:
-                st.session_state.score -= 1
-                st.error("Incorrect.")
-            st.session_state.combinations_made += 1
-            if st.session_state.combinations_made >= max_combinations:
-                st.experimental_rerun()
-            else:
-                st.session_state[f"button_{organ2}_style"] = "color: white; background-color: green;" if organ2 == correct else "color: white; background-color: red;"
-                st.session_state[f"button_{organ2}_label"] = "Correct" if organ2 == correct else "Incorrect"
-                st.experimental_rerun()
+        button2 = st.button(organ2, key=f"button_{organ2}")
 
-    # Mostrar el puntaje en un cuadro naranja, más grande y con el número más grande
+    if button1 or button2:
+        selected_organ = organ1 if button1 else organ2
+        if selected_organ == correct:
+            st.session_state.score += 1
+            st.success("Correct answer!")
+        else:
+            st.session_state.score -= 1
+            st.error("Incorrect answer.")
+
+        st.session_state.combinations_made += 1
+
+        if st.session_state.combinations_made >= max_combinations:
+            st.experimental_rerun()
+        else:
+            st.experimental_rerun()
+
+    # Mostrar el puntaje en un cuadro naranja más grande y con el número más grande
     st.markdown(f'<div style="background-color: orange; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
 
     if st.session_state.combinations_made >= max_combinations:
-        st.write(f"Game Over!  Final Score: {st.session_state.score}")
+        st.write(f"Game Over! Final Score: {st.session_state.score}")
         if st.button("Try Again"):
             st.session_state.score = 0
             st.session_state.combinations_made = 0
