@@ -1,9 +1,11 @@
 import streamlit as st
 import random
 from PIL import Image
+import requests
+from io import BytesIO
 
-# Ruta local de la imagen
-image_path = "Allosteric_Solutions.png"
+# URL de la imagen
+image_url = "https://i.imgur.com/LzPcPIk.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
@@ -31,8 +33,9 @@ def main():
 
     # Mostrar el logo usando st.image
     try:
-        image = Image.open(image_path)
-        st.image(image, width=300, caption='Allosteric Solutions')
+        response = requests.get(image_url)
+        image = Image.open(BytesIO(response.content))
+        st.image(image, width=100, caption='Allosteric Solutions')
     except Exception as e:
         st.error(f"Error loading image: {e}")
 
