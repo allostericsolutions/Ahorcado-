@@ -7,16 +7,16 @@ from io import BytesIO
 # URL de la imagen (asegúrate de que el bucket tenga acceso público)
 image_url = "https://storage.googleapis.com/allostericsolutionsr/Allosteric_Solutions.png"
 
-# Definición de los órganos y sus ecogenicidades
+# Definición de los órganos y sus ecogenicidades (orden descendente)
 real_echogenicity = {
-    "Diaphragm": 1,
-    "Renal sinus": 2,
-    "Pancreas": 3,
-    "Spleen": 4,
-    "Liver": 5,
-    "Renal cortex": 6,
-    "Renal medulla": 7,
     "Gallbladder": 8,
+    "Renal medulla": 7,
+    "Renal cortex": 6,
+    "Liver": 5,
+    "Spleen": 4,
+    "Pancreas": 3,
+    "Renal sinus": 2,
+    "Diaphragm": 1,
 }
 
 echogenicity_list = list(real_echogenicity.keys())
@@ -58,10 +58,10 @@ def main():
 
     if random.choice([True, False]):
         question = "Which is more echogenic?"
-        correct = organ1 if real_echogenicity[organ1] < real_echogenicity[organ2] else organ2
+        correct = organ1 if real_echogenicity[organ1] > real_echogenicity[organ2] else organ2
     else:
         question = "Which is less echogenic?"
-        correct = organ1 if real_echogenicity[organ1] > real_echogenicity[organ2] else organ2
+        correct = organ1 if real_echogenicity[organ1] < real_echogenicity[organ2] else organ2
 
     st.write(f"**Question:** {question}")
 
@@ -76,7 +76,8 @@ def main():
                 st.session_state.score -= 1
                 st.error("Incorrect.")
             st.session_state.combinations_made += 1
-            st.experimental_rerun()
+            if st.session_state.combinations_made >= max_combinations:
+                st.experimental_rerun()
 
     with col2:
         if st.button(organ2):
@@ -87,19 +88,19 @@ def main():
                 st.session_state.score -= 1
                 st.error("Incorrect.")
             st.session_state.combinations_made += 1
-            st.experimental_rerun()
+            if st.session_state.combinations_made >= max_combinations:
+                st.experimental_rerun()
 
-    # Mostrar el puntaje
-    st.markdown(f"**Score:** {st.session_state.score}")
+    # Mostrar el puntaje en un cuadro rojo, más grande y con el número más grande
+    st.markdown(f'<div style="background-color: red; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
 
     if st.session_state.combinations_made >= max_combinations:
         st.write(f"Game Over! 😔 Final Score: {st.session_state.score}")
-
-    if st.button("Try Again"):
-        st.session_state.score = 0
-        st.session_state.combinations_made = 0
-        st.session_state.used_combinations.clear()
-        st.experimental_rerun()
+        if st.button("Try Again"):
+            st.session_state.score = 0
+            st.session_state.combinations_made = 0
+            st.session_state.used_combinations.clear()
+            st.experimental_rerun()
 
 if __name__ == "__main__":
     main()
