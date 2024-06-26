@@ -9,14 +9,14 @@ image_url = "https://storage.googleapis.com/allostericsolutionsr/Allosteric_Solu
 
 # Definición de los órganos y sus ecogenicidades (orden descendente)
 real_echogenicity = {
-    "Gallbladder": 8,
-    "Renal medulla": 7,
-    "Renal cortex": 6,
-    "Liver": 5,
-    "Spleen": 4,
-    "Pancreas": 3,
-    "Renal sinus": 2,
     "Diaphragm": 1,
+    "Renal sinus": 2,
+    "Pancreas": 3,
+    "Spleen": 4,
+    "Liver": 5,
+    "Renal cortex": 6,
+    "Renal medulla": 7,
+    "Gallbladder": 8,
 }
 
 echogenicity_list = list(real_echogenicity.keys())
@@ -58,17 +58,17 @@ def main():
 
     if random.choice([True, False]):
         question = "Which is more echogenic?"
-        correct = organ1 if real_echogenicity[organ1] > real_echogenicity[organ2] else organ2
+        correct = organ1 if real_echogenicity[organ1] < real_echogenicity[organ2] else organ2
     else:
         question = "Which is less echogenic?"
-        correct = organ1 if real_echogenicity[organ1] < real_echogenicity[organ2] else organ2
+        correct = organ1 if real_echogenicity[organ1] > real_echogenicity[organ2] else organ2
 
     st.write(f"**Question:** {question}")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button(organ1):
+        if st.button(organ1, key=f"button_{organ1}"):
             if organ1 == correct:
                 st.session_state.score += 1
                 st.success("Correct!")
@@ -78,9 +78,13 @@ def main():
             st.session_state.combinations_made += 1
             if st.session_state.combinations_made >= max_combinations:
                 st.experimental_rerun()
+            else:
+                st.session_state[f"button_{organ1}_style"] = "color: white; background-color: green;" if organ1 == correct else "color: white; background-color: red;"
+                st.session_state[f"button_{organ1}_label"] = "Correct" if organ1 == correct else "Incorrect"
+                st.experimental_rerun()
 
     with col2:
-        if st.button(organ2):
+        if st.button(organ2, key=f"button_{organ2}"):
             if organ2 == correct:
                 st.session_state.score += 1
                 st.success("Correct!")
@@ -90,12 +94,16 @@ def main():
             st.session_state.combinations_made += 1
             if st.session_state.combinations_made >= max_combinations:
                 st.experimental_rerun()
+            else:
+                st.session_state[f"button_{organ2}_style"] = "color: white; background-color: green;" if organ2 == correct else "color: white; background-color: red;"
+                st.session_state[f"button_{organ2}_label"] = "Correct" if organ2 == correct else "Incorrect"
+                st.experimental_rerun()
 
-    # Mostrar el puntaje en un cuadro rojo, más grande y con el número más grande
-    st.markdown(f'<div style="background-color: red; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
+    # Mostrar el puntaje en un cuadro naranja, más grande y con el número más grande
+    st.markdown(f'<div style="background-color: orange; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
 
     if st.session_state.combinations_made >= max_combinations:
-        st.write(f"Game Over! 😔 Final Score: {st.session_state.score}")
+        st.write(f"Game Over!  Final Score: {st.session_state.score}")
         if st.button("Try Again"):
             st.session_state.score = 0
             st.session_state.combinations_made = 0
