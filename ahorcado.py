@@ -31,12 +31,12 @@ def get_unique_pair(used_combinations):
 def main():
     st.title("Echogenicity Game")
 
-    # Mostrar el logo usando st.image
+    # Mostrar el logo usando st.image con ancho personalizado
     try:
         response = requests.get(image_url)
         response.raise_for_status()  # Check if the request was successful
         image = Image.open(BytesIO(response.content))
-        st.image(image, width=100, caption='Allosteric Solutions')
+        st.image(image, width=200, caption='Allosteric Solutions')  # Ancho de 200 píxeles
     except requests.exceptions.RequestException as e:
         st.error(f"Error loading image: {e}")
     except Exception as e:
