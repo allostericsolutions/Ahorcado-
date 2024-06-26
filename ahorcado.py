@@ -101,7 +101,7 @@ def main():
         "|               ",
         "----           ",
     ]
-    st.write("\n".join(hangman_stages[:st.session_state.hangman_state]))
+    st.markdown("\n".join(hangman_stages[:st.session_state.hangman_state]))  # Usar st.markdown
 
     if st.session_state.hangman_state >= 7:
         st.write("You Win! 😄")
