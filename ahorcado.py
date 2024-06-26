@@ -5,16 +5,7 @@ import requests
 from io import BytesIO
 
 # URL de la imagen
-image_url = "https://i.imgur.com/LzPcPIk.png"
-
-import streamlit as st
-import random
-from PIL import Image
-import requests
-from io import BytesIO
-
-# URL de la imagen
-image_url = "https://i.imgur.com/LzPcPIk.png"
+image_url = "https://storage.cloud.google.com/allostericsolutions/Allosteric_Solutions.png"
 
 # Definición de los órganos y sus ecogenicidades
 real_echogenicity = {
