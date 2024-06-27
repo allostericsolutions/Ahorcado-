@@ -45,7 +45,7 @@ def main():
     # Enlace a tu página web
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
 
-    # Inicialización de variables de estado
+    # Initialize session state variables
     if "score" not in st.session_state:
         st.session_state.score = 0
     if "combinations_made" not in st.session_state:
@@ -82,25 +82,27 @@ def main():
         st.session_state.last_selection = selected_organ
         st.session_state.last_correct = (selected_organ == correct)
 
-        if st.session_state.combinations_made >= max_combinations:
-            st.experimental_rerun()
-        else:
-            st.experimental_rerun()
+        st.rerun()
 
     # Display buttons with feedback colors
     with col1:
         if st.button(organ1, key=f"button_{organ1}"):
             update_state(organ1)
-    
     with col2:
         if st.button(organ2, key=f"button_{organ2}"):
             update_state(organ2)
 
     if st.session_state.last_selection:
-        if st.session_state.last_correct:
-            st.markdown(f"<style>div[data-testid='stButton']>button[style='width: 100%;'] {{ background-color: green; }}</style>", unsafe_allow_html=True)
+        if st.session_state.last_selection == organ1:
+            if st.session_state.last_correct:
+                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(1) button {{ background-color: green; }}</style>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(1) button {{ background-color: red; }}</style>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<style>div[data-testid='stButton']>button[style='width: 100%;'] {{ background-color: red; }}</style>", unsafe_allow_html=True)
+            if st.session_state.last_correct:
+                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(2) button {{ background-color: green; }}</style>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(2) button {{ background-color: red; }}</style>", unsafe_allow_html=True)
 
     # Mostrar el puntaje en un cuadro naranja más grande y con el número más grande
     st.markdown(f'<div style="background-color: orange; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
@@ -113,7 +115,7 @@ def main():
             st.session_state.used_combinations.clear()
             st.session_state.last_selection = None
             st.session_state.last_correct = None
-            st.experimental_rerun()
+            st.rerun()
 
 if __name__ == "__main__":
     main()
