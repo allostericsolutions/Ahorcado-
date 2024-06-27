@@ -3,119 +3,109 @@ import random
 from PIL import Image
 import requests
 from io import BytesIO
+import time
 
-# URL de la imagen (asegúrate de que el bucket tenga acceso público)
-image_url = "https://storage.googleapis.com/allostericsolutionsr/Allosteric_Solutions.png"
+# ... (Definiciones de órganos y ecogenicidad como en el código original) ...
 
-# Definición de los órganos y sus ecogenicidades (orden descendente)
-real_echogenicity = {
-    "Diaphragm": 1,
-    "Renal sinus": 2,
-    "Pancreas": 3,
-    "Spleen": 4,
-    "Liver": 5,
-    "Renal cortex": 6,
-    "Renal medulla": 7,
-    "Gallbladder": 8,
+# Diccionario de imágenes de órganos (reemplaza con URLs reales)
+organ_images = {
+    "Diaphragm": "https://example.com/diaphragm.png",
+    "Renal sinus": "https://example.com/renal_sinus.png",
+    # ... agregar más imágenes ...
 }
 
-echogenicity_list = list(real_echogenicity.keys())
-
-def get_unique_pair(used_combinations):
-    while True:
-        organ1, organ2 = random.sample(echogenicity_list, 2)
-        if (organ1, organ2) not in used_combinations and (organ2, organ1) not in used_combinations:
-            used_combinations.add((organ1, organ2))
-            return organ1, organ2
-
-def main():
-    st.title("Echogenicity Game")
-
-    # Mostrar el logo usando st.image con ancho personalizado
+def mostrar_logo():
+    """Muestra el logo de Allosteric Solutions."""
     try:
         response = requests.get(image_url)
-        response.raise_for_status()  # Check if the request was successful
+        response.raise_for_status()
         image = Image.open(BytesIO(response.content))
-        st.image(image, width=200, caption='Allosteric Solutions')  # Ancho de 200 píxeles
+        st.image(image, width=200, caption='Allosteric Solutions')
     except requests.exceptions.RequestException as e:
         st.error(f"Error loading image: {e}")
     except Exception as e:
         st.error(f"Error processing image: {e}")
 
-    # Enlace a tu página web
+def generar_pregunta(used_combinations):
+    """Genera una pregunta de ecogenicidad."""
+    organ1, organ2 = get_unique_pair(used_combinations)
+
+    # Elegir aleatoriamente entre "más ecogénico" o "menos ecogénico"
+    pregunta_tipo = random.choice(["más", "menos"])
+    if pregunta_tipo == "más":
+        correct = organ1 if real_echogenicity[organ1] < real_echogenicity[organ2] else organ2
+    else:
+        correct = organ1 if real_echogenicity[organ1] > real_echogenicity[organ2] else organ2
+
+    return organ1, organ2, correct, pregunta_tipo
+
+def mostrar_pregunta(organ1, organ2, pregunta_tipo):
+    """Muestra la pregunta del juego."""
+    st.write(f"**Pregunta:** ¿Cuál órgano es **{pregunta_tipo}** ecogénico?")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image(Image.open(BytesIO(requests.get(organ_images[organ1]).content)), caption=organ1)
+    with col2:
+        st.image(Image.open(BytesIO(requests.get(organ_images[organ2]).content)), caption=organ2)
+
+def actualizar_estado(selected_organ, correct, score, combinations_made):
+    """Actualiza el estado del juego."""
+    if selected_organ == correct:
+        score += 1
+        st.success("¡Correcto!")
+    else:
+        score -= 1
+        st.error(f"Incorrecto. {correct} es {('más' if real_echogenicity[correct] < real_echogenicity[selected_organ] else 'menos')} ecogénico.")
+
+    combinations_made += 1
+    return score, combinations_made
+
+def main():
+    st.title("Juego de Ecogenicidad")
+
+    mostrar_logo()
     st.markdown('<a href="https://www.allostericsolutions.com/" target="_blank">Visit our website</a>', unsafe_allow_html=True)
 
-    # Initialize session state variables
+    # Inicializar variables de estado de la sesión
     if "score" not in st.session_state:
         st.session_state.score = 0
     if "combinations_made" not in st.session_state:
         st.session_state.combinations_made = 0
     if "used_combinations" not in st.session_state:
         st.session_state.used_combinations = set()
-    if "last_selection" not in st.session_state:
-        st.session_state.last_selection = None
-    if "last_correct" not in st.session_state:
-        st.session_state.last_correct = None
 
     max_combinations = 10
+    
+    # Barra de progreso
+    progress_bar = st.progress(0)
 
-    organ1, organ2 = get_unique_pair(st.session_state.used_combinations)
+    while st.session_state.combinations_made < max_combinations:
+        organ1, organ2, correct, pregunta_tipo = generar_pregunta(st.session_state.used_combinations)
+        mostrar_pregunta(organ1, organ2, pregunta_tipo)
 
-    if random.choice([True, False]):
-        question = "Which is more echogenic?"
-        correct = organ1 if real_echogenicity[organ1] < real_echogenicity[organ2] else organ2
-    else:
-        question = "Which is less echogenic?"
-        correct = organ1 if real_echogenicity[organ1] > real_echogenicity[organ2] else organ2
+        # Botones de respuesta con animación de resaltado
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(organ1, key=f"button_{organ1}", on_click=lambda: actualizar_estado(organ1, correct, st.session_state.score, st.session_state.combinations_made)):
+                st.session_state.score, st.session_state.combinations_made = actualizar_estado(organ1, correct, st.session_state.score, st.session_state.combinations_made)
+                time.sleep(1) # Pausa para la animación
+                st.rerun()
+        with col2:
+            if st.button(organ2, key=f"button_{organ2}", on_click=lambda: actualizar_estado(organ2, correct, st.session_state.score, st.session_state.combinations_made)):
+                st.session_state.score, st.session_state.combinations_made = actualizar_estado(organ2, correct, st.session_state.score, st.session_state.combinations_made)
+                time.sleep(1) # Pausa para la animación
+                st.rerun()
 
-    st.write(f"**Question:** {question}")
+        # Actualizar la barra de progreso
+        progress_bar.progress((st.session_state.combinations_made + 1) / max_combinations)
 
-    col1, col2 = st.columns(2)
-
-    def update_state(selected_organ):
-        if selected_organ == correct:
-            st.session_state.score += 1
-        else:
-            st.session_state.score -= 1
-
-        st.session_state.combinations_made += 1
-        st.session_state.last_selection = selected_organ
-        st.session_state.last_correct = (selected_organ == correct)
-
+    st.write(f"Juego terminado! Tu puntuación final es: {st.session_state.score}")
+    if st.button("Jugar de nuevo"):
+        st.session_state.score = 0
+        st.session_state.combinations_made = 0
+        st.session_state.used_combinations.clear()
         st.rerun()
-
-    # Display buttons with feedback colors
-    with col1:
-        if st.button(organ1, key=f"button_{organ1}"):
-            update_state(organ1)
-    with col2:
-        if st.button(organ2, key=f"button_{organ2}"):
-            update_state(organ2)
-
-    if st.session_state.last_selection:
-        if st.session_state.last_selection == organ1:
-            if st.session_state.last_correct:
-                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(1) button {{ background-color: green; }}</style>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(1) button {{ background-color: red; }}</style>", unsafe_allow_html=True)
-        else:
-            if st.session_state.last_correct:
-                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(2) button {{ background-color: green; }}</style>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<style>div[data-testid='stButton']:nth-of-type(2) button {{ background-color: red; }}</style>", unsafe_allow_html=True)
-
-    # Mostrar el puntaje en un cuadro naranja más grande y con el número más grande
-    st.markdown(f'<div style="background-color: orange; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
-
-    if st.session_state.combinations_made >= max_combinations:
-        st.write(f"Game Over! Final Score: {st.session_state.score}")
-        if st.button("Try Again"):
-            st.session_state.score = 0
-            st.session_state.combinations_made = 0
-            st.session_state.used_combinations.clear()
-            st.session_state.last_selection = None
-            st.session_state.last_correct = None
-            st.rerun()
 
 if __name__ == "__main__":
     main()
