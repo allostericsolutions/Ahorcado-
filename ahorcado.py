@@ -52,6 +52,10 @@ def main():
         st.session_state.combinations_made = 0
     if "used_combinations" not in st.session_state:
         st.session_state.used_combinations = set()
+    if "last_selection" not in st.session_state:
+        st.session_state.last_selection = None
+    if "last_correct" not in st.session_state:
+        st.session_state.last_correct = None
 
     max_combinations = 10
 
@@ -68,26 +72,35 @@ def main():
 
     col1, col2 = st.columns(2)
 
-    with col1:
-        button1 = st.button(organ1, key=f"button_{organ1}")
-    with col2:
-        button2 = st.button(organ2, key=f"button_{organ2}")
-
-    if button1 or button2:
-        selected_organ = organ1 if button1 else organ2
+    def update_state(selected_organ):
         if selected_organ == correct:
             st.session_state.score += 1
-            st.success("Correct answer!")
         else:
             st.session_state.score -= 1
-            st.error("Incorrect answer.")
 
         st.session_state.combinations_made += 1
+        st.session_state.last_selection = selected_organ
+        st.session_state.last_correct = (selected_organ == correct)
 
         if st.session_state.combinations_made >= max_combinations:
             st.experimental_rerun()
         else:
             st.experimental_rerun()
+
+    # Display buttons with feedback colors
+    with col1:
+        if st.button(organ1, key=f"button_{organ1}"):
+            update_state(organ1)
+    
+    with col2:
+        if st.button(organ2, key=f"button_{organ2}"):
+            update_state(organ2)
+
+    if st.session_state.last_selection:
+        if st.session_state.last_correct:
+            st.markdown(f"<style>div[data-testid='stButton']>button[style='width: 100%;'] {{ background-color: green; }}</style>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<style>div[data-testid='stButton']>button[style='width: 100%;'] {{ background-color: red; }}</style>", unsafe_allow_html=True)
 
     # Mostrar el puntaje en un cuadro naranja más grande y con el número más grande
     st.markdown(f'<div style="background-color: orange; padding: 20px; font-size: 30px; text-align: center;">**Score:** {st.session_state.score}</div>', unsafe_allow_html=True)
@@ -98,6 +111,8 @@ def main():
             st.session_state.score = 0
             st.session_state.combinations_made = 0
             st.session_state.used_combinations.clear()
+            st.session_state.last_selection = None
+            st.session_state.last_correct = None
             st.experimental_rerun()
 
 if __name__ == "__main__":
